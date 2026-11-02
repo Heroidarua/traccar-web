@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { ThemeProvider, useMediaQuery } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import { prefixer } from 'stylis';
@@ -9,24 +9,15 @@ import { useLocalization } from './common/components/LocalizationProvider';
 import { useAttributePreference } from './common/util/preferences';
 
 const cache = {
-  ltr: createCache({
-    key: 'muiltr',
-    stylisPlugins: [prefixer],
-  }),
-  rtl: createCache({
-    key: 'muirtl',
-    stylisPlugins: [prefixer, rtlPlugin],
-  }),
+  ltr: createCache({ key: 'muiltr', stylisPlugins: [prefixer] }),
+  rtl: createCache({ key: 'muirtl', stylisPlugins: [prefixer, rtlPlugin] }),
 };
 
 const AppThemeProvider = ({ children }) => {
   const server = useSelector((state) => state.session.server);
   const { direction } = useLocalization();
-
-  // Dark Tech is the default; an explicit user preference still takes precedence.
-  const preferDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const darkMode = useAttributePreference('darkMode', true ?? preferDarkMode);
-
+  // Dark Tech is the default; an explicit saved user preference takes precedence.
+  const darkMode = useAttributePreference('darkMode', true);
   const themeInstance = theme(server, darkMode, direction);
 
   return (
