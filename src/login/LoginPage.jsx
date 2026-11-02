@@ -16,7 +16,7 @@ import CountryFlag from 'react-country-flag';
 import { makeStyles } from 'tss-react/mui';
 import VpnLockIcon from '@mui/icons-material/VpnLock';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import { useDispatch, useSelector } from 'react-redux';
