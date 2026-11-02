@@ -1,4 +1,8 @@
 import { Paper } from '@mui/material';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
+import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
+import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
 import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()((theme) => ({
@@ -283,10 +287,10 @@ const PlanetScene = ({ className }) => (
 );
 
 const features = [
-  { icon: '⌖', label: 'Rastreamento em Tempo Real' },
-  { icon: '▥', label: 'Histórico Completo' },
-  { icon: '♧', label: 'Alertas Inteligentes' },
-  { icon: '◇', label: 'Mais Segurança para Você' },
+  { icon: <LocationOnOutlinedIcon />, label: 'Rastreamento em Tempo Real' },
+  { icon: <BarChartOutlinedIcon />, label: 'Histórico Completo' },
+  { icon: <NotificationsActiveOutlinedIcon />, label: 'Alertas Inteligentes' },
+  { icon: <GppGoodOutlinedIcon />, label: 'Mais Segurança para Você' },
 ];
 
 const LoginLayout = ({ children }) => {
@@ -308,7 +312,7 @@ const LoginLayout = ({ children }) => {
         <div className={classes.featureGrid}>
           {features.map((feature) => (
             <div className={classes.feature} key={feature.label}>
-              <div className={classes.featureIcon}><span aria-hidden="true">{feature.icon}</span></div>
+              <div className={classes.featureIcon}>{feature.icon}</div>
               <div className={classes.featureText}>{feature.label}</div>
             </div>
           ))}
