@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  useMediaQuery,
   Select,
   MenuItem,
   FormControl,
@@ -10,12 +9,16 @@ import {
   Alert,
   IconButton,
   Tooltip,
+  InputAdornment,
+  Typography,
 } from '@mui/material';
 import CountryFlag from 'react-country-flag';
 import { makeStyles } from 'tss-react/mui';
 import VpnLockIcon from '@mui/icons-material/VpnLock';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
-import { useTheme } from '@mui/material/styles';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { sessionActions } from '../store';
@@ -28,48 +31,66 @@ import {
   nativeEnvironment,
   nativePostMessage,
 } from '../common/components/NativeInterface';
-import LogoImage from './LogoImage';
 import { useCatch } from '../reactHelper';
 import ServerQrCodeDialog from '../common/components/ServerQrCodeDialog';
 import PasswordField from '../common/components/PasswordField';
 
 const useStyles = makeStyles()((theme) => ({
   options: {
-    position: 'fixed',
-    top: theme.spacing(2),
-    right: theme.spacing(2),
+    position: 'absolute',
+    top: 16,
+    right: 18,
     display: 'flex',
+    alignItems: 'center',
     flexDirection: 'row',
     gap: theme.spacing(1),
+    zIndex: 3,
+    '& .MuiInputBase-root': { color: '#DCEBFA', fontSize: 13 },
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(96,165,250,.25)' },
+    '& .MuiSvgIcon-root': { color: '#A8BCD4' },
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
     gap: theme.spacing(2),
+    width: '100%',
+    '& .MuiTextField-root': { width: '100%' },
+  },
+  heading: { marginBottom: theme.spacing(1.5), paddingRight: 20 },
+  title: {
+    color: '#F8FAFC',
+    fontWeight: 800,
+    fontSize: 'clamp(25px, 2.5vw, 31px)',
+    letterSpacing: '-.04em',
+    lineHeight: 1.15,
+    '& span': { color: '#22D3EE' },
+  },
+  subtitle: { color: '#9FB3CC', fontSize: 14, marginTop: 10 },
+  accent: {
+    width: 54,
+    height: 3,
+    marginTop: 20,
+    borderRadius: 4,
+    background: 'linear-gradient(90deg, #1685FF, #22D3EE)',
+    boxShadow: '0 0 14px rgba(34,211,238,.5)',
   },
   extraContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
+    flexWrap: 'wrap',
     gap: theme.spacing(4),
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
   },
-  registerButton: {
-    minWidth: 'unset',
-  },
-  link: {
-    cursor: 'pointer',
-  },
-  flag: {
-    marginRight: theme.spacing(1),
-  },
+  link: { cursor: 'pointer', fontWeight: 600 },
+  flag: { marginRight: theme.spacing(1) },
+  submitButton: { width: '100%', marginTop: theme.spacing(.5) },
 }));
 
 const LoginPage = () => {
   const { classes } = useStyles();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const theme = useTheme();
   const t = useTranslation();
 
   const { languages, language, setLocalLanguage } = useLocalization();
@@ -80,7 +101,6 @@ const LoginPage = () => {
   }));
 
   const [failed, setFailed] = useState(false);
-
   const [email, setEmail] = usePersistedState('loginEmail', '');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -100,7 +120,6 @@ const LoginPage = () => {
     (state) => state.session.server.openIdEnabled && state.session.server.openIdForce,
   );
   const [codeEnabled, setCodeEnabled] = useState(false);
-
   const [announcementShown, setAnnouncementShown] = useState(false);
   const announcement = useSelector((state) => state.session.server.announcement);
 
@@ -170,7 +189,7 @@ const LoginPage = () => {
     <LoginLayout>
       <div className={classes.options}>
         {nativeEnvironment && changeEnabled && (
-          <IconButton color="primary" onClick={() => navigate('/change-server')}>
+          <IconButton color="primary" onClick={() => navigate('/change-server')} size="small">
             <Tooltip
               title={`${t('settingsServer')}: ${window.location.hostname}`}
               open={showServerTooltip}
@@ -181,12 +200,12 @@ const LoginPage = () => {
           </IconButton>
         )}
         {!nativeEnvironment && (
-          <IconButton color="primary" onClick={() => setShowQr(true)}>
+          <IconButton color="primary" onClick={() => setShowQr(true)} size="small" aria-label="QR code">
             <QrCode2Icon />
           </IconButton>
         )}
         {languageEnabled && (
-          <FormControl>
+          <FormControl size="small">
             <Select value={language} onChange={(e) => setLocalLanguage(e.target.value)}>
               {languageList.map((it) => (
                 <MenuItem key={it.code} value={it.code}>
@@ -200,10 +219,16 @@ const LoginPage = () => {
           </FormControl>
         )}
       </div>
+      <div className={classes.heading}>
+        <Typography component="h1" className={classes.title}>
+          Bem-vindo ao <span>PROJETE+</span>
+        </Typography>
+        <Typography className={classes.subtitle}>
+          Faça login para acessar o sistema
+        </Typography>
+        <div className={classes.accent} />
+      </div>
       <div className={classes.container}>
-        {useMediaQuery(theme.breakpoints.down('lg')) && (
-          <LogoImage color={theme.palette.primary.main} />
-        )}
         {!!announcement && !announcementShown && (
           <Alert severity="info" onClose={() => setAnnouncementShown(true)}>
             {announcement}
@@ -221,6 +246,13 @@ const LoginPage = () => {
               autoFocus={!email}
               onChange={(e) => setEmail(e.target.value)}
               helperText={failed && 'Invalid username or password'}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start"><PersonOutlineIcon /></InputAdornment>
+                  ),
+                },
+              }}
             />
             <PasswordField
               required
@@ -231,6 +263,13 @@ const LoginPage = () => {
               autoComplete="current-password"
               autoFocus={!!email}
               onChange={(e) => setPassword(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start"><LockOutlinedIcon /></InputAdornment>
+                  ),
+                },
+              }}
             />
             {codeEnabled && (
               <TextField
@@ -244,13 +283,15 @@ const LoginPage = () => {
               />
             )}
             <Button
+              className={classes.submitButton}
               onClick={handlePasswordLogin}
               type="submit"
               variant="contained"
               color="secondary"
+              startIcon={<LoginRoundedIcon />}
               disabled={submitting || !email || !password || (codeEnabled && !code)}
             >
-              {t('loginLogin')}
+              {submitting ? 'Entrando…' : t('loginLogin')}
             </Button>
           </>
         )}
