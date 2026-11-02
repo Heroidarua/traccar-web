@@ -23,8 +23,9 @@ const AppThemeProvider = ({ children }) => {
   const server = useSelector((state) => state.session.server);
   const { direction } = useLocalization();
 
+  // Dark Tech is the default; an explicit user preference still takes precedence.
   const preferDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const darkMode = useAttributePreference('darkMode', preferDarkMode);
+  const darkMode = useAttributePreference('darkMode', true ?? preferDarkMode);
 
   const themeInstance = theme(server, darkMode, direction);
 
